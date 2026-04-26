@@ -1,13 +1,12 @@
 #include "Folder.h"
 
-// Constructor
+
 Folder::Folder(const string& name, Node* parent)
     : Node(name, parent)
 {
     head = nullptr;   // empty folder initially
 }
 
-// Destructor
 Folder::~Folder()
 {
     ChildNode* temp = head;
@@ -23,7 +22,6 @@ Folder::~Folder()
     }
 }
 
-// Add node (file or folder)
 void Folder::addNode(Node* node)
 {
     // check duplicate names
