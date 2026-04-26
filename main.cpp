@@ -42,7 +42,6 @@ int main()
     cout << "\n--- ROOT AFTER DELETE ---" << endl;;
     root->list();
 
-    // cleanup root (this deletes everything recursively)
     delete root;
 
     return 0;
