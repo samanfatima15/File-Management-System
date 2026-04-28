@@ -52,7 +52,7 @@ void CommandManager::rename(const string& oldName, const string& newName) {
         return;
     }
     if (current->find(newName) != nullptr) {
-        cout << "Name '" << newName << "' already exists.\n";
+        cout << "Name " << newName << " already exists." <<endl;
         return;
     }
 }
