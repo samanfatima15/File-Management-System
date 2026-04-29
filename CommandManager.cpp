@@ -48,13 +48,23 @@ void CommandManager::rename(const string& oldName, const string& newName) {
     Node* found = current->find(oldName);
 
     if (found == nullptr) {
-        cout << "'" << oldName << "' not found.\n";
+        cout << oldName << " not found." << endl;
         return;
     }
+
+    if (oldName == newName) {
+        cout << "Same name. No changes made." << endl;
+        return;
+    }
+
     if (current->find(newName) != nullptr) {
-        cout << "Name " << newName << " already exists." <<endl;
+        cout << "Name '" << newName << "' already exists." << endl;
         return;
     }
+
+    found->setName(newName);
+
+    cout << "Renamed " << oldName << " to " << newName << endl;
 }
 
 void CommandManager::searchRecursive(Folder* folder, const string& targetName, const string& path) {
