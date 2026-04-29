@@ -56,3 +56,11 @@ void CommandManager::rename(const string& oldName, const string& newName) {
         return;
     }
 }
+
+void CommandManager::searchRecursive(Folder* folder, const string& targetName, const string& path) {
+}
+
+void CommandManager::search(const string& name) {
+    cout << "Searching for '" << name << endl;
+    current->searchIn(name, current->getPath());
+}
