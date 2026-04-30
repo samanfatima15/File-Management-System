@@ -74,3 +74,9 @@ void CommandManager::search(const string& name) {
     cout << "Searching for '" << name << endl;
     current->searchIn(name, current->getPath());
 }
+
+void CommandManager::touch(const string& type, const string& name) {
+
+    cout << "[stub] touch " << type << "     " << name << endl;
+}
+
