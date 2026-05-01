@@ -43,6 +43,11 @@ int main()
     root->list();
 
     delete root;
+  
+    CommandManager cm;
+    cm.run();
+    return 0;
+}
 
     return 0;
 }
