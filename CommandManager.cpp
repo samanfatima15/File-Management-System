@@ -79,4 +79,58 @@ void CommandManager::touch(const string& type, const string& name) {
 
     cout << "[stub] touch " << type << "     " << name << endl;
 }
+void CommandManager::run() {
+    string cmd;
 
+    cout << "File Management System Ready.";
+    cout << "Commands: ls  mkdir  cd  rm  rename  search  touch  exit"<<endl;
+
+    while (true) {
+        cout << current->getPath() << endl;
+        cin >> cmd;
+
+        if (cmd == "exit") {
+            break;
+
+        }
+        else if (cmd == "ls") {
+            ls();
+
+        }
+        else if (cmd == "mkdir") {
+            string name;
+            cin >> name;
+            mkdir(name);
+
+        }
+        else if (cmd == "cd") {
+            string name;
+            cin >> name;
+            cd(name);
+        }
+        else if (cmd == "rm") {
+            string name;
+            cin >> name;
+            rm(name);
+        }
+        else if (cmd == "rename") {
+            string oldName, newName;
+            cin >> oldName >> newName;
+            rename(oldName, newName);
+        }
+        else if (cmd == "search") {
+            string name;
+            cin >> name;
+            search(name);
+
+        }
+        else if (cmd == "touch") {
+            string type, name;
+            cin >> type >> name;
+            touch(type, name);
+        }
+        else {
+            cout << "Unknown command."<<endl;
+        }
+    }
+}
