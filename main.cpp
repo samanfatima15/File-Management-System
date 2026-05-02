@@ -46,8 +46,7 @@ int main()
   
     CommandManager cm;
     cm.run();
-    return 0;
-}
+
 
     return 0;
 }
