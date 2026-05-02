@@ -140,3 +140,15 @@ bool Folder::isFolder() const
 {
     return true;
 }
+
+void Folder::searchIn(const string& targetName, const string& path) {
+    ChildNode* temp = head;
+    while (temp != nullptr) {
+        string fullPath = path + "/" + temp->data->getName();
+        if (temp->data->getName() == targetName)
+            cout << "Found at: " << fullPath << endl;
+        if (temp->data->isFolder())
+            ((Folder*)temp->data)->searchIn(targetName, fullPath);
+        temp = temp->next;
+    }
+}
