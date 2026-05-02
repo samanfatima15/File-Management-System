@@ -38,6 +38,7 @@ public:
 
     // Type check
     bool isFolder() const;
+void searchIn(const string& targetName, const string& path);
 };
 
 #endif
