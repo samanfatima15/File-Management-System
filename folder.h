@@ -1,4 +1,3 @@
-
 #ifndef FOLDER_H
 #define FOLDER_H
 
@@ -17,28 +16,19 @@ private:
         ChildNode* next;
     };
 
-    ChildNode* head;   // first child in linked list
+    ChildNode* head; 
 
 public:
-    // Constructor
     Folder(const string& name, Node* parent);
-
-    // Destructor
     ~Folder();
-
-    // Core operations
     void addNode(Node* node);
     Node* find(const string& name);
     void removeNode(const string& name);
-
-    // Display
     void list() const;
     void open();
     void display() const;
-
-    // Type check
     bool isFolder() const;
-void searchIn(const string& targetName, const string& path);
+    bool searchIn(const string& targetName, const string& path);
 };
 
 #endif
