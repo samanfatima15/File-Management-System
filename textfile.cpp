@@ -1,13 +1,9 @@
-#include "TxtFile.h"
-#include <iostream>
 #include "Textfile.h"
+#include <iostream>
 using namespace std;
 
 TxtFile::TxtFile(const string& name, Node* parent)
-    : File(name + ".txt", parent) {
-
-    capacity = 5;
-    lineCount = 0;
+    : File(name + ".txt", parent), lineCount(0), capacity(5) {
     lines = new string[capacity];
 }
 
@@ -17,52 +13,41 @@ TxtFile::~TxtFile() {
 
 void TxtFile::expand() {
     capacity *= 2;
-
     string* newLines = new string[capacity];
-
-    for (int i = 0; i < lineCount; i++) {
+    for (int i = 0; i < lineCount; i++)
         newLines[i] = lines[i];
-    }
-
     delete[] lines;
     lines = newLines;
 }
 
 void TxtFile::addLine(const string& line) {
-    if (lineCount == capacity) {
+    if (lineCount == capacity)
         expand();
-    }
-
     lines[lineCount++] = line;
 }
 
 void TxtFile::editLine(int index, const string& newLine) {
-    if (index >= 0 && index < lineCount) {
+    if (index >= 0 && index < lineCount)
         lines[index] = newLine;
-    }
-    else {
+    else
         cout << "Invalid line number.\n";
-    }
 }
 
 void TxtFile::showContent() {
-    cout << "\nFile: " << name << endl;
-
-    for (int i = 0; i < lineCount; i++) {
+    cout << "\n--- " << name << " ---\n";
+    for (int i = 0; i < lineCount; i++)
         cout << i + 1 << ". " << lines[i] << endl;
-    }
+}
+
+void TxtFile::display() const {
+    cout << "[TXT] " << name << endl;
 }
 
 void TxtFile::open() {
     int choice;
-
     do {
         cout << "\nEditing: " << name << endl;
-        cout << "1. Add Line\n";
-        cout << "2. Edit Line\n";
-        cout << "3. Show Content\n";
-        cout << "0. Close\n";
-        cout << "Choice: ";
+        cout << "1. Add Line\n2. Edit Line\n3. Show Content\n0. Close\nChoice: ";
         cin >> choice;
         cin.ignore();
 
@@ -72,24 +57,18 @@ void TxtFile::open() {
             getline(cin, line);
             addLine(line);
         }
-
         else if (choice == 2) {
-            int index;
-            string line;
-
+            int idx;
             cout << "Line number: ";
-            cin >> index;
+            cin >> idx;
             cin.ignore();
-
+            string line;
             cout << "New text: ";
             getline(cin, line);
-
-            editLine(index - 1, line);
+            editLine(idx - 1, line);
         }
-
         else if (choice == 3) {
             showContent();
         }
-
     } while (choice != 0);
 }
