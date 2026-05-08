@@ -19,6 +19,7 @@ private:
 public:
     CommandManager();
     ~CommandManager();
+void help();
     void ls();
     void mkdir(const string& name);
     void cd(const string& name);
