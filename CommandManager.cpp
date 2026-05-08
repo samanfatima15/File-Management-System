@@ -8,17 +8,17 @@ using namespace std;
 
 void CommandManager::help() {
     cout << "\nAvailable commands:\n";
-    cout<< endl;
-    cout << "  ls                 - List contents of current folder"<<endl;
+    cout << endl;
+    cout << "  ls                 - List contents of current folder" << endl;
     cout << "  mkdir <name>       - Create a new folder\n";
-    cout << "  cd <name>          - Change to folder (use '..' for parent)"<<endl;
-    cout << "  rm <name>          - Remove file/folder"<<endl;
-    cout << "  rename <old> <new> - Rename a node"<<endl;
-    cout << "  search <name>      - Find node recursively"<<endl;
-    cout << "  touch <type> <name>- Create file (txt, private, audio, zip)"<<endl;
-    cout << "  open <name>        - Open file/folder"<<endl;
-    cout << "  unzip <name>       - Unzip a .zip file"<<endl;
-    cout << "  exit               - Quit the program"<<endl;
+    cout << "  cd <name>          - Change to folder (use '..' for parent)" << endl;
+    cout << "  rm <name>          - Remove file/folder" << endl;
+    cout << "  rename <old> <new> - Rename a node" << endl;
+    cout << "  search <name>      - Find node recursively" << endl;
+    cout << "  touch <type> <name>- Create file (txt, private, audio, zip)" << endl;
+    cout << "  open <name>        - Open file/folder" << endl;
+    cout << "  unzip <name>       - Unzip a .zip file" << endl;
+    cout << "  exit               - Quit the program" << endl;
 }
 
 CommandManager::CommandManager() {
@@ -75,7 +75,6 @@ void CommandManager::rename(const string& oldName, const string& newName) {
         cout << oldName << " not found." << endl;
         return;
     }
-    // ROOT PROTECTION — ADDED
     if (found == root) {
         cout << "Cannot rename root folder." << endl;
         return;
@@ -92,16 +91,21 @@ void CommandManager::rename(const string& oldName, const string& newName) {
     cout << "Renamed " << oldName << " to " << newName << endl;
 }
 
+// Empty stub – not used (search handled by Folder::searchIn)
 void CommandManager::searchRecursive(Folder* folder, const string& targetName, const string& path) {
+    // intentionally left empty
 }
 
+// MODIFIED: now checks bool return and prints "not found"
 void CommandManager::search(const string& name) {
     cout << "Searching for '" << name << "'..." << endl;
-    current->searchIn(name, current->getPath());
+    bool found = current->searchIn(name, current->getPath());
+    if (!found) {
+        cout << "'" << name << "' not found." << endl;
+    }
 }
 
 void CommandManager::touch(const string& type, const string& name) {
-
     if (type == "txt") {
         if (current->find(name + ".txt") != nullptr) {
             cout << "Error: " << name << ".txt already exists." << endl;
@@ -109,7 +113,6 @@ void CommandManager::touch(const string& type, const string& name) {
         }
         current->addNode(new TxtFile(name, current));
     }
-
     else if (type == "private") {
         if (current->find(name + ".priv") != nullptr) {
             cout << "Error: " << name << ".priv already exists." << endl;
@@ -120,7 +123,6 @@ void CommandManager::touch(const string& type, const string& name) {
         cin >> passkey;
         current->addNode(new PrivateFile(name, current, passkey));
     }
-
     else if (type == "audio") {
         if (current->find(name + ".mpg") != nullptr) {
             cout << "Error: " << name << ".mpg already exists." << endl;
@@ -128,11 +130,10 @@ void CommandManager::touch(const string& type, const string& name) {
         }
         current->addNode(new AudioFile(name, current));
     }
-
     else if (type == "zip") {
         Node* toZip = current->find(name);
         if (toZip == nullptr) {
-            cout << "Error:  " << name << "    not found. Can only zip existing nodes." << endl;
+            cout << "Error: " << name << " not found. Can only zip existing nodes." << endl;
             return;
         }
         string zipName = name + "-zip.zip";
@@ -143,7 +144,6 @@ void CommandManager::touch(const string& type, const string& name) {
         string origType = toZip->isFolder() ? "folder" : "file";
         current->addNode(new ZipFile(name, current, name, origType));
     }
-
     else {
         cout << "Unknown type: '" << type << "'" << endl;
         cout << "Valid types: txt, private, audio, zip" << endl;
@@ -153,16 +153,16 @@ void CommandManager::touch(const string& type, const string& name) {
 void CommandManager::unzip(const string& zipName) {
     Node* found = current->find(zipName);
     if (found == nullptr) {
-        cout << zipName << "    not found." << endl;
+        cout << zipName << " not found." << endl;
         return;
     }
     if (found->isFolder()) {
-        cout  << zipName << "    is a folder, not a zip file." << endl;
+        cout << zipName << " is a folder, not a zip file." << endl;
         return;
     }
     ZipFile* zf = dynamic_cast<ZipFile*>(found);
     if (zf == nullptr) {
-        cout  << zipName << " is not a zip file." << endl;
+        cout << zipName << " is not a zip file." << endl;
         return;
     }
     string unzippedName = zf->getOriginalName() + "-unzipped";
@@ -186,9 +186,9 @@ void CommandManager::run() {
         if (cmd == "exit") {
             break;
         }
-       else if (cmd == "help") {
-           help();
-       }
+        else if (cmd == "help") {
+            help();
+        }
         else if (cmd == "ls") {
             ls();
         }
@@ -227,7 +227,7 @@ void CommandManager::run() {
             cin >> name;
             Node* found = current->find(name);
             if (found == nullptr)
-                cout  << name << "    not found." << endl;
+                cout << name << " not found." << endl;
             else
                 found->open();
         }
