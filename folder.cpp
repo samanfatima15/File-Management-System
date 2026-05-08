@@ -12,78 +12,62 @@ void setColor(int color) {
 Folder::Folder(const string& name, Node* parent)
     : Node(name, parent)
 {
-    head = nullptr;   // empty folder initially
+    head = nullptr;
 }
 
 Folder::~Folder()
 {
     ChildNode* temp = head;
-
     while (temp != nullptr)
     {
         ChildNode* nextNode = temp->next;
-
-        delete temp->data; // delete file/folder object
-        delete temp;       // delete list node
-
+        delete temp->data;
+        delete temp;
         temp = nextNode;
     }
 }
 
 void Folder::addNode(Node* node)
 {
-    // check duplicate names
     ChildNode* temp = head;
-
     while (temp != nullptr)
     {
         if (temp->data->getName() == node->getName())
         {
-            cout << "Error: Name already exists\n";
+            cout << "Error: Name already exists"<<endl;
             return;
         }
         temp = temp->next;
     }
 
-    // create new linked list node
     ChildNode* newNode = new ChildNode;
     newNode->data = node;
     newNode->next = nullptr;
 
-    // if empty folder
     if (head == nullptr)
     {
         head = newNode;
         return;
     }
 
-    // go to end
     temp = head;
     while (temp->next != nullptr)
-    {
         temp = temp->next;
-    }
-
     temp->next = newNode;
 }
 
-// Find node by name
 Node* Folder::find(const string& name)
 {
     ChildNode* temp = head;
-
     while (temp != nullptr)
     {
         if (temp->data->getName() == name)
             return temp->data;
-
         temp = temp->next;
     }
-
     return nullptr;
 }
 
-// Remove node
 void Folder::removeNode(const string& name)
 {
     ChildNode* temp = head;
@@ -93,76 +77,69 @@ void Folder::removeNode(const string& name)
     {
         if (temp->data->getName() == name)
         {
-            // if first node
             if (prev == nullptr)
-            {
                 head = temp->next;
-            }
             else
-            {
                 prev->next = temp->next;
-            }
 
             delete temp->data;
             delete temp;
-
             cout << "Deleted successfully\n";
             return;
         }
-
         prev = temp;
         temp = temp->next;
     }
-
-    cout << "Node not found\n";
+    cout << "Node not found"<<endl;
 }
 
 void Folder::list() const {
     ChildNode* temp = head;
     while (temp != nullptr) {
         if (temp->data->isFolder()) {
-            setColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);  
-            cout << "[Folder] ";
+            setColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+            temp->data->display();   
         } 
         else {
-            setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);  
-            cout << "[File] ";
+            setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+            temp->data->display();   
         }
-       
-        cout << temp->data->getName();
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-        
         cout << endl;
         temp = temp->next;
     }
 }
 
-// Open folder
 void Folder::open()
 {
-    cout << "Opened Folder: " << name << "\n";
+    cout << "Opened Folder: " << name << endl;
 }
 
-// Display folder info
 void Folder::display() const
 {
-    cout << "Folder: " << name << "\n";
+    cout << "Folder: " << name;
 }
 
-// Type check
 bool Folder::isFolder() const
 {
     return true;
 }
 
-void Folder::searchIn(const string& targetName, const string& path) {
+bool Folder::searchIn(const string& targetName, const string& path) {
+    bool foundAny = false;
     ChildNode* temp = head;
     while (temp != nullptr) {
         string fullPath = path + "/" + temp->data->getName();
-        if (temp->data->getName() == targetName)
+        if (temp->data->getName() == targetName) {
             cout << "Found at: " << fullPath << endl;
-        if (temp->data->isFolder())
-            ((Folder*)temp->data)->searchIn(targetName, fullPath);
+            foundAny = true;
+        }
+        if (temp->data->isFolder()) {
+            Folder* sub = (Folder*)temp->data;
+            if (sub->searchIn(targetName, fullPath))
+                foundAny = true;
+        }
         temp = temp->next;
     }
+    return foundAny;
 }
