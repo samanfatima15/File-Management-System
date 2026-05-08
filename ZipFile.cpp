@@ -2,8 +2,8 @@
 #include <iostream>
 using namespace std;
 
-
-ZipFile::ZipFile(const string& name, Node* parent, const string& origName, const string& origType) : File(name + "-zip.zip", parent)
+ZipFile::ZipFile(const string& name, Node* parent, const string& origName, const string& origType)
+    : File(name + "-zip.zip", parent)
 {
     originalName = origName;
     originalType = origType;
@@ -11,12 +11,15 @@ ZipFile::ZipFile(const string& name, Node* parent, const string& origName, const
 }
 
 ZipFile::~ZipFile() {
+    // nothing to delete
+}
+
 void ZipFile::open() {
-    cout << "Zipped files cannot be opened. thyve to be Unzip first." << endl;
+    cout << "Zipped files cannot be opened. Unzip first." << endl;
 }
 
 void ZipFile::display() const {
-    cout << "Zip " << name << " contains: " << originalName << endl;
+    cout << "[Zip] " << name << " contains: " << originalName << endl;
 }
 
 string ZipFile::getOriginalName() const {
