@@ -55,6 +55,11 @@ void CommandManager::rename(const string& oldName, const string& newName) {
         cout << oldName << " not found." << endl;
         return;
     }
+    // ROOT PROTECTION — ADDED
+    if (found == root) {
+        cout << "Cannot rename root folder." << endl;
+        return;
+    }
     if (oldName == newName) {
         cout << "Same name. No changes made." << endl;
         return;
