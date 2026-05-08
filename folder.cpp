@@ -1,5 +1,13 @@
 #include "Folder.h"
+#include <iostream>
+#include <windows.h>   
+#include <string>
+using namespace std;
 
+void setColor(int color) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
 
 Folder::Folder(const string& name, Node* parent)
     : Node(name, parent)
@@ -109,16 +117,22 @@ void Folder::removeNode(const string& name)
     cout << "Node not found\n";
 }
 
-// List contents
-void Folder::list() const
-{
+void Folder::list() const {
     ChildNode* temp = head;
-
-    while (temp != nullptr)
-    {
-        cout << (temp->data->isFolder() ? "[Folder] " : "[File] ")
-            << temp->data->getName() << "\n";
-
+    while (temp != nullptr) {
+        if (temp->data->isFolder()) {
+            setColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);  
+            cout << "[Folder] ";
+        } 
+        else {
+            setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);  
+            cout << "[File] ";
+        }
+       
+        cout << temp->data->getName();
+        setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        
+        cout << endl;
         temp = temp->next;
     }
 }
