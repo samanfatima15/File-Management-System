@@ -46,6 +46,11 @@ void CommandManager::cd(const string& name) {
 }
 
 void CommandManager::rm(const string& name) {
+    Node* found = current->find(name);
+    if (found == root) {
+        cout << "Cannot delete root." << endl;
+        return;
+    }
     current->removeNode(name);
 }
 
