@@ -1,9 +1,11 @@
-#include "PrivateFile.h"   
+#include "PrivateFile.h"
 #include <iostream>
+#include <string>   
 using namespace std;
 
 PrivateFile::PrivateFile(const string& name, Node* parent, const string& passkey)
-    : File(name + ".priv", parent)  
+    : File(name + ".priv", parent)   
+{
     this->passkey = passkey;
     this->lineCount = 0;
     this->capacity = 5;
@@ -59,7 +61,8 @@ void PrivateFile::open() {
             if (idx >= 1 && idx <= lineCount) {
                 cout << "New text: ";
                 getline(cin, lines[idx - 1]);
-            } else {
+            }
+            else {
                 cout << "Invalid line number." << endl;
             }
         }
