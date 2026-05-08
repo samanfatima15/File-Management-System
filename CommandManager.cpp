@@ -6,6 +6,21 @@
 #include <iostream>
 using namespace std;
 
+void CommandManager::help() {
+    cout << "\nAvailable commands:\n";
+    cout<< endl;
+    cout << "  ls                 - List contents of current folder"<<endl;
+    cout << "  mkdir <name>       - Create a new folder\n";
+    cout << "  cd <name>          - Change to folder (use '..' for parent)"<<endl;
+    cout << "  rm <name>          - Remove file/folder"<<endl;
+    cout << "  rename <old> <new> - Rename a node"<<endl;
+    cout << "  search <name>      - Find node recursively"<<endl;
+    cout << "  touch <type> <name>- Create file (txt, private, audio, zip)"<<endl;
+    cout << "  open <name>        - Open file/folder"<<endl;
+    cout << "  unzip <name>       - Unzip a .zip file"<<endl;
+    cout << "  exit               - Quit the program"<<endl;
+}
+
 CommandManager::CommandManager() {
     root = new Folder("root", nullptr);
     current = root;
@@ -171,6 +186,9 @@ void CommandManager::run() {
         if (cmd == "exit") {
             break;
         }
+       else if (cmd == "help") {
+           help();
+       }
         else if (cmd == "ls") {
             ls();
         }
