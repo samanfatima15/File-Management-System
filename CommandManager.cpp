@@ -168,12 +168,12 @@ void CommandManager::unzip(const string& zipName) {
 void CommandManager::run() {
     string cmd;
     cout << "File Management System Ready." << endl;
-    cout << "Commands: ls, mkdir, cd, rm, rename, search, touch, open, unzip, exit" << endl;
+    help(); 
     while (true) {
         cout << endl << "[" << current->getPath() << "] > ";
         cin >> cmd;
         if (cmd == "exit") break;
-        else if (cmd == "help") help();
+        else if (cmd == "help") help();   //menu shown regardless & on demand as well
         else if (cmd == "ls") ls();
         else if (cmd == "mkdir") { string n; cin >> n; mkdir(n); }
         else if (cmd == "cd") { string n; cin >> n; cd(n); }
