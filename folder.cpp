@@ -1,145 +1,173 @@
 #include "Folder.h"
+#include "PrivateFile.h"
+#include "Config.h"
+#include <filesystem>
 #include <iostream>
-#include <windows.h>   
-#include <string>
 using namespace std;
 
-void setColor(int color) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, color);
-}
+namespace fs = std::filesystem;
 
 Folder::Folder(const string& name, Node* parent)
-    : Node(name, parent)
-{
-    head = nullptr;
+    : Node(name, parent), head(nullptr) {
 }
 
-Folder::~Folder()
-{
-    ChildNode* temp = head;
-    while (temp != nullptr)
-    {
-        ChildNode* nextNode = temp->next;
-        delete temp->data;
-        delete temp;
-        temp = nextNode;
+Folder::~Folder() {
+    ChildNode* curr = head;
+    while (curr) {
+        ChildNode* next = curr->next;
+        delete curr->data;
+        delete curr;
+        curr = next;
     }
 }
 
-void Folder::addNode(Node* node)
-{
-    ChildNode* temp = head;
-    while (temp != nullptr)
-    {
-        if (temp->data->getName() == node->getName())
-        {
-            cout << "Error: Name already exists"<<endl;
+void Folder::addNode(Node* node) {
+    // Check for duplicate names
+    ChildNode* curr = head;
+    while (curr) {
+        if (curr->data->getName() == node->getName()) {
+            cout << "Error: '" << node->getName() << "' already exists\n";
+            delete node;
             return;
         }
-        temp = temp->next;
+        curr = curr->next;
     }
 
+    // If adding a folder, create real directory on disk
+    if (node->isFolder()) {
+        string realPath = VFS_ROOT + node->getPath();
+        fs::create_directories(realPath);
+    }
+
+    // Create new linked list node (add at beginning)
     ChildNode* newNode = new ChildNode;
     newNode->data = node;
-    newNode->next = nullptr;
-
-    if (head == nullptr)
-    {
-        head = newNode;
-        return;
-    }
-
-    temp = head;
-    while (temp->next != nullptr)
-        temp = temp->next;
-    temp->next = newNode;
+    newNode->next = head;
+    head = newNode;
 }
 
-Node* Folder::find(const string& name)
-{
-    ChildNode* temp = head;
-    while (temp != nullptr)
-    {
-        if (temp->data->getName() == name)
-            return temp->data;
-        temp = temp->next;
+Node* Folder::find(const string& name) {
+    ChildNode* curr = head;
+    while (curr) {
+        if (curr->data->getName() == name)
+            return curr->data;
+        curr = curr->next;
     }
     return nullptr;
 }
 
-void Folder::removeNode(const string& name)
-{
-    ChildNode* temp = head;
+void Folder::removeNode(const string& name) {
+    ChildNode* curr = head;
     ChildNode* prev = nullptr;
 
-    while (temp != nullptr)
-    {
-        if (temp->data->getName() == name)
-        {
-            if (prev == nullptr)
-                head = temp->next;
-            else
-                prev->next = temp->next;
+    while (curr) {
+        if (curr->data->getName() == name) {
 
-            delete temp->data;
-            delete temp;
-            cout << "Deleted successfully\n";
+            // ===== PRIVATE FILE PASSWORD CHECK =====
+            File* filePtr = dynamic_cast<File*>(curr->data);
+            if (filePtr && filePtr->isPrivate()) {
+                PrivateFile* privFile = dynamic_cast<PrivateFile*>(filePtr);
+                if (privFile) {
+                    cout << "\n[SECURITY] This is a protected private file.\n";
+                    string password;
+                    cout << "Enter passkey to delete: ";
+                    getline(cin, password);
+
+                    if (!privFile->verifyPassword(password)) {
+                        cout << "[DENIED] Wrong passkey. Deletion canceled!\n";
+                        return;
+                    }
+                    cout << "[GRANTED] Password correct. Deleting...\n";
+                }
+            }
+            // ===== END OF PASSWORD CHECK =====
+
+            // Delete real file/directory from disk
+            string realPath = VFS_ROOT + curr->data->getPath();
+            if (curr->data->isFolder()) {
+                fs::remove_all(realPath);
+            }
+            else {
+                fs::remove(realPath);
+                // Also delete associated .key file for private files
+                string keyPath = realPath + ".key";
+                if (fs::exists(keyPath)) {
+                    fs::remove(keyPath);
+                }
+            }
+
+            // Remove from linked list
+            if (prev == nullptr) {
+                head = curr->next;
+            }
+            else {
+                prev->next = curr->next;
+            }
+
+            delete curr->data;
+            delete curr;
+            cout << "Deleted '" << name << "' successfully.\n";
             return;
         }
-        prev = temp;
-        temp = temp->next;
+        prev = curr;
+        curr = curr->next;
     }
-    cout << "Node not found"<<endl;
+    cout << "'" << name << "' not found\n";
 }
 
 void Folder::list() const {
-    ChildNode* temp = head;
-    while (temp != nullptr) {
-        if (temp->data->isFolder()) {
-            setColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-            temp->data->display();   
-        } 
-        else {
-            setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-            temp->data->display();   
-        }
-        setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-        cout << endl;
-        temp = temp->next;
+    ChildNode* curr = head;
+    if (!curr) {
+        cout << "  (empty)\n";
+        return;
+    }
+
+    while (curr) {
+        if (curr->data->isFolder())
+            cout << "  [FOLDER] ";
+        else
+            cout << "  [FILE]   ";
+        cout << curr->data->getName() << endl;
+        curr = curr->next;
     }
 }
 
-void Folder::open()
-{
-    cout << "Opened Folder: " << name << endl;
+void Folder::open() {
+    // Do nothing - folder navigation happens in CommandManager
 }
 
-void Folder::display() const
-{
-    cout << "Folder: " << name;
+void Folder::display() const {
+    cout << "[FOLDER] " << name;
 }
 
-bool Folder::isFolder() const
-{
+bool Folder::isFolder() const {
     return true;
 }
 
-bool Folder::searchIn(const string& targetName, const string& path) {
-    bool foundAny = false;
-    ChildNode* temp = head;
-    while (temp != nullptr) {
-        string fullPath = path + "/" + temp->data->getName();
-        if (temp->data->getName() == targetName) {
-            cout << "Found at: " << fullPath << endl;
-            foundAny = true;
-        }
-        if (temp->data->isFolder()) {
-            Folder* sub = (Folder*)temp->data;
-            if (sub->searchIn(targetName, fullPath))
-                foundAny = true;
-        }
-        temp = temp->next;
+bool Folder::searchNode(const string& target, string path) {
+    // Check current folder
+    if (name == target) {
+        cout << "Found folder: " << path << "/" << name << endl;
+        return true;
     }
-    return foundAny;
+
+    // Search through children
+    ChildNode* curr = head;
+    while (curr) {
+        if (curr->data->getName() == target) {
+            string type = curr->data->isFolder() ? "folder" : "file";
+            cout << "Found " << type << ": " << path << "/" << name << "/" << target << endl;
+            return true;
+        }
+
+        // If child is a folder, search inside it recursively
+        if (curr->data->isFolder()) {
+            Folder* subFolder = (Folder*)curr->data;
+            string newPath = path + "/" + name;
+            if (subFolder->searchNode(target, newPath))
+                return true;
+        }
+        curr = curr->next;
+    }
+    return false;
 }
