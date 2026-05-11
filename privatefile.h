@@ -1,25 +1,27 @@
-#pragma once
 #ifndef PRIVATEFILE_H
 #define PRIVATEFILE_H
 
 #include "File.h"
 #include <string>
 using namespace std;
+
 class PrivateFile : public File {
 private:
     string passkey;
-    string* lines;
-    int lineCount;
-    int capacity;
+    bool checkPass();
 
-    void expand();
-    bool verifyPasskey();
+   // these are the encryption function and the decyption fucntions
+    string encrypt(const string& data, const string& key);
+    string decrypt(const string& data, const string& key);
 
 public:
-    PrivateFile(const string& name, Node* parent, const string& passkey);
+    PrivateFile(const string& name, Node* parent, const string& key);
     ~PrivateFile();
+
     void open() override;
     void display() const override;
+    bool isPrivate() const override;
+    bool verifyPassword(const string& input) const;
 };
 
 #endif
