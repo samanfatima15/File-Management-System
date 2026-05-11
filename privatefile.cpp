@@ -1,79 +1,159 @@
 #include "PrivateFile.h"
+#include "Config.h"
 #include <iostream>
-#include <string>   
+#include <fstream>
+#include <filesystem>
 using namespace std;
 
-PrivateFile::PrivateFile(const string& name, Node* parent, const string& passkey)
-    : File(name + ".priv", parent)   
+namespace fs = std::filesystem;
+
+PrivateFile::PrivateFile(const string& name, Node* parent, const string& key)
+    : File(name + ".priv", parent), passkey(key) {
+
+    string diskPath = getDiskPath();
+    string keyPath = diskPath + ".key";
+
+    // we are creating an empty fileon the disk and also saving the password in the other file
+    ofstream contentFile(diskPath);
+    contentFile.close();
+    ofstream keyFile(keyPath);
+    keyFile << passkey;
+    keyFile.close();
+}
+
+PrivateFile::~PrivateFile()
 {
-    this->passkey = passkey;
-    this->lineCount = 0;
-    this->capacity = 5;
-    this->lines = new string[capacity];
+}
+bool PrivateFile::isPrivate() const {
+    return true;
+}
+bool PrivateFile::verifyPassword(const string& input) const 
+{
+    if (input == passkey)
+    {
+        return true;
+    }
+    string keyPath = getDiskPath() + ".key";
+    if (fs::exists(keyPath)) {
+        ifstream keyFile(keyPath);
+        string storedKey;
+        getline(keyFile, storedKey);
+        keyFile.close();
+        if (input == storedKey) {
+            // Update the in-memory passkey
+            const_cast<PrivateFile*>(this)->passkey = storedKey;
+            return true;
+        }
+    }
+
+    return false;
 }
 
-PrivateFile::~PrivateFile() {
-    delete[] lines;
-}
-
-void PrivateFile::expand() {
-    capacity *= 2;
-    string* newLines = new string[capacity];
-    for (int i = 0; i < lineCount; i++)
-        newLines[i] = lines[i];
-    delete[] lines;
-    lines = newLines;
-}
-
-bool PrivateFile::verifyPasskey() {
+bool PrivateFile::checkPass() {
     string input;
-    cout << "Enter passkey: ";
-    cin >> ws;
+    cout << "\nEnter passkey for '" << name << "': ";
     getline(cin, input);
-    return input == passkey;
+
+    if (verifyPassword(input)) {
+        cout << "Access is grantedas you haave entered the corret password\n";
+        return true;
+    }
+    else {
+        cout << " as the password is wrong we cannot grant you the access.\n";
+        return false;
+    }
+}
+
+void PrivateFile::display() const {
+    cout << "[private] " << name;
 }
 
 void PrivateFile::open() {
-    if (!verifyPasskey()) {
-        cout << "Wrong passkey. Access denied." << endl;
-        return;
+    
+    if (!checkPass()) 
+    {
+        return;  
     }
-    cout << "Access granted. Editing " << getName() << endl;
+    string diskPath = getDiskPath();
+
+    //reding the content as the same i habe done in the text file like we creat e a large  file
+    string lines[100];
+    int lineCount = 0;
+
+    if (fs::exists(diskPath)) {
+        ifstream infile(diskPath);
+        string line;
+        while (getline(infile, line) && lineCount < 100) {
+            lines[lineCount] = line;
+            lineCount++;
+        }
+        infile.close();
+    }
+
+    cout << "\n[OPENING] " << name << " (Private File)\n";
 
     int choice;
     do {
-        cout << "   Choice:   1. Add Line    2. Edit Line      3. Show Content   0. Close   ";
+        cout << "name: " << endl; 
+        cout << "1. Add line" << endl;
+        cout << "2. Edit line" << endl;
+        cout << "3. Show content" << endl;
+        cout << "0. Close" << endl;
+        cout << "Choice: ";
         cin >> choice;
         cin.ignore();
 
         if (choice == 1) {
-            string line;
-            cout << "Enter line: ";
-            getline(cin, line);
-            if (lineCount == capacity) expand();
-            lines[lineCount++] = line;
+            string newLine;
+            cout << "hey user enter the line: ";
+            getline(cin, newLine);
+            if (lineCount < 100) {
+                lines[lineCount] = newLine;
+                lineCount++;
+                cout << "Line added is added"<<endl;
+            }
+            else {
+                cout << "you cannot add next as the filesize is of 100  \n";
+            }
         }
         else if (choice == 2) {
+            if (lineCount == 0) {
+                cout << "you have not added a single line so you cannot edit first you have to enter the line then edit"<<endl;
+                continue;
+            }
+            cout << "this is the current content:"<<endl;
+            for (int i = 0; i < lineCount; i++)
+                cout << "  " << i + 1 << ". " << lines[i] << endl;
             int idx;
-            cout << "Line number: ";
+            cout << "Line number to edit: ";
             cin >> idx;
             cin.ignore();
             if (idx >= 1 && idx <= lineCount) {
                 cout << "New text: ";
                 getline(cin, lines[idx - 1]);
+                cout << "the line is " << idx << " updated.\n";
             }
             else {
-                cout << "Invalid line number." << endl;
+                cout << "there is an errror as this is an invalid line either this does not exixt"<<endl;
             }
         }
         else if (choice == 3) {
-            cout << getName() << endl;
-            for (int i = 0; i < lineCount; i++)
-                cout << i + 1 << ". " << lines[i] << endl;
+            cout << "the content of" << name << " is" << endl;
+            if (lineCount == 0)
+                cout << "(empty file)\n";
+            else
+                for (int i = 0; i < lineCount; i++)
+                    cout << "  " << i + 1 << ". " << lines[i] << endl;
+            cout << endl;
         }
     } while (choice != 0);
-}
 
-void PrivateFile::display() const {
-    cout << "[Private] " << name << endl;
+    // Save content back
+    ofstream outfile(diskPath);
+    for (int i = 0; i < lineCount; i++) {
+        outfile << lines[i] << endl;
+    }
+    outfile.close();
+
+    cout << "closed " << name << endl;
 }
