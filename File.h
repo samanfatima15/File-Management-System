@@ -1,19 +1,25 @@
-#pragma once
 #ifndef FILE_H
 #define FILE_H
 
 #include "Node.h"
-#include <iostream>
 #include <string>
 using namespace std;
 
-class File : public Node {
+class File : public Node 
+{
 public:
     File(const string& name, Node* parent);
-    ~File();
-    void open() override;
-    void display() const override;    
-    bool isFolder() const override;   
+    virtual ~File();
+
+    bool isFolder() const override;
+    void display() const override;
+    virtual void open() override;
+
+    string getDiskPath() const;
+    virtual bool isPrivate() const
+    { 
+        return false; 
+    }  
 };
 
 #endif
