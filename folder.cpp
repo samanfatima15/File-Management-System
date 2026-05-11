@@ -26,7 +26,7 @@ void Folder::addNode(Node* node) {
     ChildNode* curr = head;
     while (curr) {
         if (curr->data->getName() == node->getName()) {
-            cout << "Error: '" << node->getName() << "' already exists\n";
+            cout << "i have error '" << node->getName() << "as this allready exists"<<endl;
             delete node;
             return;
         }
@@ -61,42 +61,37 @@ void Folder::removeNode(const string& name) {
     ChildNode* prev = nullptr;
 
     while (curr) {
-        if (curr->data->getName() == name) {
-
-            // ===== PRIVATE FILE PASSWORD CHECK =====
+        if (curr->data->getName() == name) 
+        {
             File* filePtr = dynamic_cast<File*>(curr->data);
             if (filePtr && filePtr->isPrivate()) {
                 PrivateFile* privFile = dynamic_cast<PrivateFile*>(filePtr);
                 if (privFile) {
-                    cout << "\n[SECURITY] This is a protected private file.\n";
+                    cout << "as this is a private file"<<endl;
                     string password;
-                    cout << "Enter passkey to delete: ";
+                    cout << "so you have to enter the password for delete ";
                     getline(cin, password);
 
                     if (!privFile->verifyPassword(password)) {
-                        cout << "[DENIED] Wrong passkey. Deletion canceled!\n";
+                        cout << "as you have entered the wrong password we cannot give you access"<<endl;
                         return;
                     }
-                    cout << "[GRANTED] Password correct. Deleting...\n";
+                    cout << "as the password is correct the access is granted to you"<<endl;
                 }
             }
-            // ===== END OF PASSWORD CHECK =====
-
-            // Delete real file/directory from disk
             string realPath = VFS_ROOT + curr->data->getPath();
             if (curr->data->isFolder()) {
                 fs::remove_all(realPath);
             }
             else {
                 fs::remove(realPath);
-                // Also delete associated .key file for private files
                 string keyPath = realPath + ".key";
                 if (fs::exists(keyPath)) {
                     fs::remove(keyPath);
                 }
             }
 
-            // Remove from linked list
+            // Removing from the linked lists
             if (prev == nullptr) {
                 head = curr->next;
             }
@@ -106,52 +101,54 @@ void Folder::removeNode(const string& name) {
 
             delete curr->data;
             delete curr;
-            cout << "Deleted '" << name << "' successfully.\n";
+            cout << "it is deleted" << name << "' successfully.\n";
             return;
         }
         prev = curr;
         curr = curr->next;
     }
-    cout << "'" << name << "' not found\n";
+    cout << "'" << name << "' not found"<<endl;
 }
 
 void Folder::list() const {
     ChildNode* curr = head;
     if (!curr) {
-        cout << "  (empty)\n";
+        cout << "empty" <<endl;
         return;
     }
 
     while (curr) {
         if (curr->data->isFolder())
-            cout << "  [FOLDER] ";
+            cout << "  it is folder ";
         else
-            cout << "  [FILE]   ";
+            cout << "  it is file  ";
         cout << curr->data->getName() << endl;
         curr = curr->next;
     }
 }
 
-void Folder::open() {
-    // Do nothing - folder navigation happens in CommandManager
+void Folder::open() 
+{
+    
 }
 
-void Folder::display() const {
-    cout << "[FOLDER] " << name;
+void Folder::display() const
+{
+    cout << "folder " << name;
 }
 
-bool Folder::isFolder() const {
+bool Folder::isFolder() const
+{
     return true;
 }
 
-bool Folder::searchNode(const string& target, string path) {
-    // Check current folder
+bool Folder::searchNode(const string& target, string path) 
+{
+    // Checking the current folder
     if (name == target) {
-        cout << "Found folder: " << path << "/" << name << endl;
+        cout << "the folder is found " << path << "/" << name << endl;
         return true;
-    }
-
-    // Search through children
+    }// Searching through children
     ChildNode* curr = head;
     while (curr) {
         if (curr->data->getName() == target) {
@@ -160,7 +157,7 @@ bool Folder::searchNode(const string& target, string path) {
             return true;
         }
 
-        // If child is a folder, search inside it recursively
+        // If child is a folder,then we have choose reccursion to search as it searches by calling the function
         if (curr->data->isFolder()) {
             Folder* subFolder = (Folder*)curr->data;
             string newPath = path + "/" + name;
