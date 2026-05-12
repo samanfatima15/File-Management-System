@@ -8,7 +8,8 @@ using namespace std;
 namespace fs = std::filesystem;
 
 PrivateFile::PrivateFile(const string& name, Node* parent, const string& key)
-    : File(name + ".priv", parent), passkey(key) {
+    : File(name + ".priv", parent), passkey(key) 
+{
 
     string diskPath = getDiskPath();
     string keyPath = diskPath + ".key";
