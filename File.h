@@ -1,3 +1,4 @@
+#pragma once
 #ifndef FILE_H
 #define FILE_H
 
@@ -5,7 +6,7 @@
 #include <string>
 using namespace std;
 
-class File : public Node 
+class File : public Node
 {
 public:
     File(const string& name, Node* parent);
@@ -17,9 +18,12 @@ public:
 
     string getDiskPath() const;
     virtual bool isPrivate() const
-    { 
-        return false; 
-    }  
+    {
+        return false;
+    }
+
+protected:
+    File(const string& name, Node* parent, bool skipDiskCreate);
 };
 
 #endif
