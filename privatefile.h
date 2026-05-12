@@ -11,10 +11,6 @@ private:
     string passkey;
     bool checkPass();
 
-    // encryption function & decyption fucntions
-    string encrypt(const string& data, const string& key);
-    string decrypt(const string& data, const string& key);
-
 public:
     PrivateFile(const string& name, Node* parent, const string& key);
     ~PrivateFile();
