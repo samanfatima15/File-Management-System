@@ -1,4 +1,4 @@
-##pragma once
+
 #ifndef TXTFILE_H
 #define TXTFILE_H
 
@@ -9,10 +9,11 @@ using namespace std;
 class TxtFile : public File {
 public:
     TxtFile(const string& name, Node* parent);
+    TxtFile(const string& fullName, Node* parent, bool isUnzipped);
     ~TxtFile();
 
     void open() override;
     void display() const override;
 };
 
-#endif
+#endif#pragma once
