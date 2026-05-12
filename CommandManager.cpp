@@ -142,7 +142,7 @@ void CommandManager::renameNode(const string& oldName, const string& newName) {
     Node* target = current->find(oldName);
     if (!target) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error: '" << oldName << "' not found" << endl;
+        cout << "we have a error" << oldName << "is not found" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
@@ -168,12 +168,12 @@ void CommandManager::renameNode(const string& oldName, const string& newName) {
         fs::rename(oldPath, newPath);
         target->setName(newName);
         setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-        cout << "Renamed '" << oldName << "' to '" << newName << "'" << endl;
+        cout << "it is renamed '" << oldName << "' to '" << newName << "'" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
     catch (const fs::filesystem_error& e) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error renaming: " << e.what() << endl;
+        cout << "Error in the renaimming " << e.what() << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
 }
@@ -181,7 +181,7 @@ void CommandManager::renameNode(const string& oldName, const string& newName) {
 void CommandManager::searchNode(const string& name) {
     if (name.empty()) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "use== search <name>" << endl;
+        cout << "usage: search <name>" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
@@ -212,7 +212,7 @@ void CommandManager::makeFile(const string& type, const string& name) {
         }
         current->addNode(new TxtFile(name, current));
         setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-        cout << "Text file '" << fullName << "' created" << endl;
+        cout << "Text file '" << fullName << "is  created" << endl;
         cout << "to edit the file==open  " << fullName << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
@@ -220,7 +220,7 @@ void CommandManager::makeFile(const string& type, const string& name) {
         string fullName = name + ".priv";
         if (current->find(fullName)) {
             setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Error: '" << fullName << "' already exists" << endl;
+            cout << "there is aan error as  '" << fullName << "' already exists" << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             return;
         }
@@ -272,7 +272,7 @@ void CommandManager::makeFile(const string& type, const string& name) {
     else {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
         cout << "Error: Unknown type '" << type << "'" << endl;
-        cout << "Valid types: txt, private, audio, zip" << endl;
+        cout << "the valid types are here: txt, private, audio, zip" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
 }
@@ -289,14 +289,14 @@ void CommandManager::unzipFile(const string& name) {
     Node* found = current->find(name);
     if (!found) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error: '" << name << "' not found" << endl;
+        cout << "there is a error'" << name << "' not found" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
 
     if (found->isFolder()) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error: '" << name << "' is a folder, not a zip file" << endl;
+        cout << "we have a error '" << name << "' is a folder, not a zip file" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
@@ -318,7 +318,7 @@ void CommandManager::unzipFile(const string& name) {
 
     if (current->find(unzippedName)) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error: '" << unzippedName << "' already exists in memory" << endl;
+        cout << "there is and error  '" << unzippedName << "' it already exists in memory" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
@@ -343,7 +343,7 @@ void CommandManager::unzipFile(const string& name) {
         }
         else if (ext == ".priv") {
             current->addNode(new File(unzippedName, current));
-            cout << "Private file restored – password not restored, open with external editor.\n";
+            cout << "Private file is restored and password is not restored you can open it with the  external editor"<<endl;
         }
         else if (ext == ".mpg") {
             string baseName = unzippedName.substr(0, unzippedName.find_last_of('.'));
@@ -363,7 +363,7 @@ void CommandManager::openNode(const string& name) {
     if (name.empty()) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
         cout << "Usage: open <file_or_folder_name>" << endl;
-        cout << "For files use the full name with extension (e.g open mynotes.txt)" << endl;
+        cout << "for the files use the full names with the extension" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
@@ -371,8 +371,8 @@ void CommandManager::openNode(const string& name) {
     Node* found = current->find(name);
     if (!found) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error: '" << name << "' not found" << endl;
-        cout << " Use 'ls' to see available files. For text files include .txt extension." << endl;
+        cout << "there is and error " << name << "as this is not founcd" << endl;
+        cout << " you ca use the ls to the see the file and folers" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
@@ -403,7 +403,7 @@ void CommandManager::run() {
 
         if (cmd == "exit" || cmd == "quit") {
             setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-            cout << "Goodbye dear user :) Files saved in: " << VFS_ROOT << endl;
+            cout << "Goodbye dear user Files are  saved in the  " << VFS_ROOT << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             break;
         }
@@ -455,8 +455,8 @@ void CommandManager::run() {
         }
         else if (!cmd.empty()) {
             setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Unknown command: '" << cmd << "'" << endl;
-            cout << "Type 'help' for available commands." << endl;
+            cout << "this is an unknown command'" << cmd << "'" << endl;
+            cout << "pls try the help for the command as you are entering the wrog commands we will give you a menu" << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         }
     }
