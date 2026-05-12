@@ -5,7 +5,8 @@
 #include <string>
 using namespace std;
 
-class PrivateFile : public File {
+class PrivateFile : public File
+{
 private:
     string passkey;
     bool checkPass();
