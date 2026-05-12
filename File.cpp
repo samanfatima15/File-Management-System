@@ -29,11 +29,11 @@ bool File::isFolder() const {
 }
 
 void File::display() const {
-    cout << "[FILE] " << name;
+    cout << "file:" << name;
 }
 
 void File::open() {
-    cout << "Opening " << name << endl;
+    cout << "it is opening" << name << endl;
 }
 
 string File::getDiskPath() const {
