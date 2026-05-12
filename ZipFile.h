@@ -8,7 +8,8 @@
 #include <vector>
 using namespace std;
 
-class ZipFile : public File {
+class ZipFile : public File 
+{
 private:
     string originalName;
     string originalType;
