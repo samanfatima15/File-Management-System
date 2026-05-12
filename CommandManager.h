@@ -1,34 +1,28 @@
-#pragma once
 #ifndef COMMANDMANAGER_H
 #define COMMANDMANAGER_H
 
 #include "Folder.h"
-#include "AudioFile.h"
-#include "ZipFile.h"
-#include "TxtFile.h"       
-#include "PrivateFile.h" 
 #include <string>
-using namespace std;
 
-class CommandManager 
-{
+class CommandManager {
 private:
     Folder* root;
     Folder* current;
-    void searchRecursive(Folder* folder, const string& targetName, const string& path);
 
 public:
     CommandManager();
     ~CommandManager();
-void help();
-    void ls();
-    void mkdir(const string& name);
-    void cd(const string& name);
-    void rm(const string& name);
-    void rename(const string& oldName, const string& newName);
-    void search(const string& name);
-    void touch(const string& type, const string& name);
-    void unzip(const string& zipName);
+
+    void showHelp();
+    void listContents();
+    void makeFolder(const std::string& name);
+    void changeFolder(const std::string& name);
+    void deleteNode(const std::string& name);
+    void renameNode(const std::string& oldName, const std::string& newName);
+    void searchNode(const std::string& name);
+    void makeFile(const std::string& type, const std::string& name);
+    void unzipFile(const std::string& name);
+    void openNode(const std::string& name);
     void run();
 };
 
