@@ -16,18 +16,18 @@ ZipFile::ZipFile(const string& name, Node* parent, const string& origName, const
 
     ofstream zipFile(zipPath);
     if (!zipFile.is_open()) {
-        cout << "Error: Could not create zip file\n";
+        cout << "there is an error as we could not create a zip file\n";
         return;
     }
 
     zipFile << "MYZIP_ARCHIVE\n";
-    zipFile << "ORIGINAL_NAME:" << origName << "\n";
-    zipFile << "TYPE:" << origType << "\n";
+    zipFile << "originalname" << origName << "\n";
+    zipFile << "type" << origType << "\n";
 
     if (origType == "file") {
         ifstream inFile(sourcePath);
         if (inFile.is_open()) {
-            zipFile << "CONTENT_BEGIN\n";
+            zipFile << "the content here is begin"<<endl;
             string line;
             while (getline(inFile, line))
                 zipFile << line << "\n";
@@ -35,41 +35,41 @@ ZipFile::ZipFile(const string& name, Node* parent, const string& origName, const
             inFile.close();
         }
         else {
-            cout << "Warning: Source file not found\n";
+            cout << "we have a error as the source file is not found"<<endl;
         }
     }
     else if (origType == "folder") {
-        zipFile << "FOLDER_CONTENT_BEGIN\n";
+        zipFile << "foldercontent has begin"<<endl;
         for (const auto& entry : fs::recursive_directory_iterator(sourcePath)) {
             if (fs::is_regular_file(entry)) {
                 string relativePath = fs::relative(entry.path(), sourcePath).string();
-                zipFile << "FILE:" << relativePath << "\n";
+                zipFile << "file:" << relativePath << "\n";
                 ifstream inFile(entry.path());
                 if (inFile.is_open()) {
-                    zipFile << "CONTENT_BEGIN\n";
+                    zipFile << "content has begin"<<endl;
                     string line;
                     while (getline(inFile, line))
                         zipFile << line << "\n";
-                    zipFile << "CONTENT_END\n";
+                    zipFile << "the content has been ended"<<endl;
                     inFile.close();
-                }
+                } 
             }
         }
-        zipFile << "FOLDER_CONTENT_END\n";
+        zipFile << "folder content has endded"<<endl;
     }
 
     zipFile.close();
-    cout << "Zipped successfully: " << this->getName() << endl;
+    cout << "it is zipped succesfuly: " << this->getName() << endl;
 }
 
 ZipFile::~ZipFile() {}
 
 void ZipFile::open() {
-    cout << "Cannot open zip file directly. Use 'unzip' command.\n";
+    cout << "we cannot open the zip file for this use the unzip command"<<endl;
 }
 
 void ZipFile::display() const {
-    cout << "[ZIP] " << name << " (contains: " << originalName << ")";
+    cout << "ZIP " << name << " (contains: " << originalName << ")";
 }
 
 string ZipFile::getOriginalName() const {
@@ -84,21 +84,21 @@ void ZipFile::unzipToDisk(Folder* currentFolder) {
     string zipPath = VFS_ROOT + getPath();
     ifstream zipFile(zipPath);
     if (!zipFile.is_open()) {
-        cout << "Error: Cannot open zip file\n";
+        cout << "there is error we cannot open the zip file"<<endl;
         return;
     }
 
     string line;
-    getline(zipFile, line); // MYZIP_ARCHIVE
-    getline(zipFile, line); // ORIGINAL_NAME:...
-    getline(zipFile, line); // TYPE:...
+    getline(zipFile, line); 
+    getline(zipFile, line); 
+    getline(zipFile, line); 
 
     string targetPath = VFS_ROOT + currentFolder->getPath() + "/" + originalName + "-unzipped";
 
     if (originalType == "file") {
-        while (getline(zipFile, line) && line != "CONTENT_BEGIN") {}
+        while (getline(zipFile, line) && line != "content has begin") {}
         ofstream outFile(targetPath);
-        while (getline(zipFile, line) && line != "CONTENT_END")
+        while (getline(zipFile, line) && line != "content is ended ")
             outFile << line << "\n";
         outFile.close();
         cout << "Unzipped file: " << originalName << "-unzipped\n";
