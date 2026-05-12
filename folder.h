@@ -7,7 +7,8 @@
 #include <string>
 using namespace std;
 
-class Folder : public Node {
+class Folder : public Node
+{
 private:
     struct ChildNode {
         Node* data;
