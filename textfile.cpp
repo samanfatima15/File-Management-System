@@ -1,18 +1,15 @@
+#include "TxtFile.h"
 #include "Config.h"
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <filesystem>
-#include "node.h"
-#include "textfile.h"
-
 using namespace std;
 
 namespace fs = std::filesystem;
 
+// this is the regular constructor
 TxtFile::TxtFile(const string& name, Node* parent)
-    : File(name + ".txt", parent)
-{
+    : File(name + ".txt", parent) {
     string diskPath = getDiskPath();
     if (!fs::exists(diskPath)) {
         ofstream ofs(diskPath);
@@ -20,86 +17,99 @@ TxtFile::TxtFile(const string& name, Node* parent)
     }
 }
 
+// this is the constructor for the unzipped files
 TxtFile::TxtFile(const string& fullName, Node* parent, bool isUnzipped)
     : File(fullName, parent, true)
 {
     string diskPath = getDiskPath();
-    if (!fs::exists(diskPath)) {
+    if (!fs::exists(diskPath)) 
+    {
         cout << "Warning: Unzipped file not found at " << diskPath << endl;
     }
 }
-
 TxtFile::~TxtFile() {}
 
 void TxtFile::display() const {
-    cout << "[TXT] " << name;
+    cout << "[txt] " << name;
 }
 
 void TxtFile::open() {
     string diskPath = getDiskPath();
 
     if (!fs::exists(diskPath)) {
-        cout << "Error: File not found on disk\n";
+        cout << "Error as we have not found the file "<<endl;
         return;
     }
 
-    vector<string> lines;
+    // Read content into array (max 100 lines) - NO VECTORS
+    string lines[100];
+    int lineCount = 0;
+
     ifstream infile(diskPath);
     string line;
-    while (getline(infile, line)) {
-        lines.push_back(line);
+    while (getline(infile, line) && lineCount < 100) {
+        lines[lineCount] = line;
+        lineCount++;
     }
     infile.close();
 
     int choice;
     do {
-        cout << "\n===== " << name << " =====" << endl;
+        cout << name << " : "<< endl;
         cout << "1. Add line\n2. Edit line\n3. Show content\n0. Close\nChoice: ";
         cin >> choice;
         cin.ignore();
 
         if (choice == 1) {
-            string newLine;
-            cout << "Enter line: ";
-            getline(cin, newLine);
-            lines.push_back(newLine);
-            cout << "Line added.\n";
-        }
-        else if (choice == 2) {
-            if (lines.empty()) {
-                cout << "No lines to edit.\n";
-                continue;
-            }
-            cout << "\nCurrent content:\n";
-            for (size_t i = 0; i < lines.size(); i++)
-                cout << i + 1 << ". " << lines[i] << endl;
-            int idx;
-            cout << "Line number to edit: ";
-            cin >> idx;
-            cin.ignore();
-            if (idx >= 1 && idx <= (int)lines.size()) {
-                cout << "New text: ";
-                getline(cin, lines[idx - 1]);
-                cout << "Line edited.\n";
+            if (lineCount < 100) {
+                string newLine;
+                cout << "hey user pls enter the  line ";
+                getline(cin, newLine);
+                lines[lineCount] = newLine;
+                lineCount++;
+                cout << "Line is added" << endl;;
             }
             else {
-                cout << "Invalid line number.\n";
+                cout << "File is full as we have only created the array of 100 .\n";
+            }
+        }
+        else if (choice == 2) {
+            if (lineCount == 0) {
+                cout << "there are no line to edit as we have not added a line" << endl;;
+                continue;
+            }
+            cout << "\nCurrent content ="<<endl;
+            for (int i = 0; i < lineCount; i++)
+                cout << i + 1 << ". " << lines[i] << endl;
+            int idx;
+            cout << "Line number to edit =";
+            cin >> idx;
+            cin.ignore();
+            if (idx >= 1 && idx <= lineCount) {
+                cout << "New text: ";
+                getline(cin, lines[idx - 1]);
+                cout << "Line edited."<<endl;
+            }
+            else {
+                cout << "this is the invalid line number to edit" << endl;
             }
         }
         else if (choice == 3) {
-            cout << "\n--- " << name << " ---\n";
-            if (lines.empty())
-                cout << "(empty file)\n";
+            cout << name << " : " << endl;
+            if (lineCount == 0)
+                cout << "(empty file)" << endl;
             else
-                for (size_t i = 0; i < lines.size(); i++)
+                for (int i = 0; i < lineCount; i++)
                     cout << i + 1 << ". " << lines[i] << endl;
         }
     } while (choice != 0);
 
+    // Save back to file
     ofstream outfile(diskPath);
-    for (const auto& l : lines)
-        outfile << l << endl;
+    for (int i = 0; i < lineCount; i++) {
+        outfile << lines[i] << endl;
+    }
     outfile.close();
 
-    cout << "Closed " << name << endl;
+    cout << "it is mow closed " << name << endl;
 }
