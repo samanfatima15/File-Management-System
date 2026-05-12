@@ -10,7 +10,7 @@ private:
     string passkey;
     bool checkPass();
 
-   // these are the encryption function and the decyption fucntions
+    // encryption function & decyption fucntions
     string encrypt(const string& data, const string& key);
     string decrypt(const string& data, const string& key);
 
