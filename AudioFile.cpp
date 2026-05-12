@@ -3,29 +3,30 @@
 #include <cstdlib>
 using namespace std;
 
-AudioFile::AudioFile(const string& name, Node* parent) : File(name + ".mpg", parent)
-{
-    cout << "Recording has been started u can start speaking in your microphone" << endl;
- // Uses ffmpeg to record 5 seconds of audio from the default microphone into the file
- //(-f selects input format: alsa/Linux or dshow/Windows, -i default mic, -t 5 duration).
-    string command = "ffmpeg -f dshow -i audio=\"Microphone\" -t 5 " + this->getName() + " -y";
+AudioFile::AudioFile(const string& name, Node* parent)
+    : File(name + ".mpg", parent) {
+    
+    cout << "audio is recortding" << endl;
+    
+    #ifdef _WIN32
+        string command = "ffmpeg -f dshow -i audio=\"Microphone\" -t 5 " + this->getName() + " -y";
+    #else
+        string command = "ffmpeg -f alsa -i default -t 5 " + this->getName() + " -y";
+    #endif
+    
     system(command.c_str());
-
-    cout << "Recording complete & file saved as= " << this->getName() << endl;
+    cout << "Saved: " << this->getName() << endl;
 }
+
 AudioFile::~AudioFile() {}
 
-
 void AudioFile::open() {
-    cout << "Playing: " << getName() << endl;
-
-    // ffmpeg plays the audio file to default speakers
+    cout << "it is playing" << getName() << endl;
     string command = "ffplay -nodisp -autoexit " + getName();
     system(command.c_str());
-
-    cout << "Playback finished." << endl;
+    cout << "the playback has been done"<<endl;
 }
 
 void AudioFile::display() const {
-    cout << "Audio=  " << name << endl;
+    cout << "audio " << name;
 }
