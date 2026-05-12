@@ -18,13 +18,13 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
-static void setColor(int color) 
+static void setColor(int color)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
 
-CommandManager::CommandManager() 
+CommandManager::CommandManager()
 {
     fs::create_directories(VFS_ROOT);
     root = new Folder("root", nullptr);
@@ -58,9 +58,9 @@ void CommandManager::listContents() {
     current->list();
 }
 
-void CommandManager::makeFolder(const string& name) 
+void CommandManager::makeFolder(const string& name)
 {
-    if (name.empty()) 
+    if (name.empty())
     {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
         cout << "Usage: mkdir <folder_name>" << endl;
@@ -277,7 +277,7 @@ void CommandManager::makeFile(const string& type, const string& name) {
     }
 }
 
-  
+
 void CommandManager::unzipFile(const string& name) {
     if (name.empty()) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
@@ -343,7 +343,7 @@ void CommandManager::unzipFile(const string& name) {
         }
         else if (ext == ".priv") {
             current->addNode(new File(unzippedName, current));
-            cout << "Private file is restored and password is not restored you can open it with the  external editor"<<endl;
+            cout << "Private file is restored and password is not restored you can open it with the  external editor" << endl;
         }
         else if (ext == ".mpg") {
             string baseName = unzippedName.substr(0, unzippedName.find_last_of('.'));
