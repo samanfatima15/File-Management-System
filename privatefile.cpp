@@ -27,7 +27,7 @@ PrivateFile::~PrivateFile()
 bool PrivateFile::isPrivate() const {
     return true;
 }
-bool PrivateFile::verifyPassword(const string& input) const 
+bool PrivateFile::verifyPassword(const string& input) const
 {
     if (input == passkey)
     {
@@ -40,7 +40,7 @@ bool PrivateFile::verifyPassword(const string& input) const
         getline(keyFile, storedKey);
         keyFile.close();
         if (input == storedKey) {
-            // Update the in-memory passkey
+            // Update passkey
             const_cast<PrivateFile*>(this)->passkey = storedKey;
             return true;
         }
@@ -51,7 +51,7 @@ bool PrivateFile::verifyPassword(const string& input) const
 
 bool PrivateFile::checkPass() {
     string input;
-    cout << "\nEnter passkey for '" << name << "': ";
+    cout << "Enter passkey for '" << name << "': ";
     getline(cin, input);
 
     if (verifyPassword(input)) {
@@ -69,14 +69,14 @@ void PrivateFile::display() const {
 }
 
 void PrivateFile::open() {
-    
-    if (!checkPass()) 
+
+    if (!checkPass())
     {
-        return;  
+        return;
     }
     string diskPath = getDiskPath();
 
-    //reding the content as the same i habe done in the text file like we creat e a large  file
+    //reding the content as the same i have done in the text file like we creat e a large  file
     string lines[100];
     int lineCount = 0;
 
@@ -94,7 +94,7 @@ void PrivateFile::open() {
 
     int choice;
     do {
-        cout << "name: " << endl; 
+        cout << "name: " << endl;
         cout << "1. Add line" << endl;
         cout << "2. Edit line" << endl;
         cout << "3. Show content" << endl;
@@ -110,7 +110,7 @@ void PrivateFile::open() {
             if (lineCount < 100) {
                 lines[lineCount] = newLine;
                 lineCount++;
-                cout << "Line added is added"<<endl;
+                cout << "Line added is added" << endl;
             }
             else {
                 cout << "you cannot add next as the filesize is of 100  \n";
@@ -118,10 +118,10 @@ void PrivateFile::open() {
         }
         else if (choice == 2) {
             if (lineCount == 0) {
-                cout << "you have not added a single line so you cannot edit first you have to enter the line then edit"<<endl;
+                cout << "you have not added a single line so you cannot edit first you have to enter the line then edit" << endl;
                 continue;
             }
-            cout << "this is the current content:"<<endl;
+            cout << "this is the current content:" << endl;
             for (int i = 0; i < lineCount; i++)
                 cout << "  " << i + 1 << ". " << lines[i] << endl;
             int idx;
@@ -134,7 +134,7 @@ void PrivateFile::open() {
                 cout << "the line is " << idx << " updated.\n";
             }
             else {
-                cout << "there is an errror as this is an invalid line either this does not exixt"<<endl;
+                cout << "there is an errror as this is an invalid line either this does not exixt" << endl;
             }
         }
         else if (choice == 3) {
