@@ -19,9 +19,13 @@ AudioFile::AudioFile(const string& name, Node* parent)
     cout << "Saved: " << this->getName() << endl;
 }
 
-AudioFile::~AudioFile() {}
+AudioFile::~AudioFile() 
+{
+    
+}
 
-void AudioFile::open() {
+void AudioFile::open()
+{
     cout << "it is playing" << getName() << endl;
     string command = "ffplay -nodisp -autoexit " + getName();
     system(command.c_str());
