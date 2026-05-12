@@ -114,7 +114,7 @@ void PrivateFile::open() {
                 cout << "Line added is added" << endl;
             }
             else {
-                cout << "you cannot add next as the filesize is of 100  \n";
+                cout << "you cannot add next as the filesize is of 100 "<<endl;
             }
         }
         else if (choice == 2) {
@@ -126,7 +126,7 @@ void PrivateFile::open() {
             for (int i = 0; i < lineCount; i++)
                 cout << "  " << i + 1 << ". " << lines[i] << endl;
             int idx;
-            cout << "Line number to edit: ";
+            cout << "pls enter the the line number to edit: ";
             cin >> idx;
             cin.ignore();
             if (idx >= 1 && idx <= lineCount) {
