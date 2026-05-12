@@ -1,30 +1,41 @@
 #include "File.h"
+#include "Config.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
 
-// Constructor
 File::File(const string& name, Node* parent)
     : Node(name, parent)
 {
+    string fullPath = getDiskPath();
+    ofstream ofs(fullPath);
+    ofs.close();
 }
 
-// Destructor
-File::~File()
+File::File(const string& name, Node* parent, bool skipDiskCreate)
+    : Node(name, parent)
 {
-    // nothing inside file, so nothing to delete
+    if (!skipDiskCreate) {
+        string fullPath = getDiskPath();
+        ofstream ofs(fullPath);
+        ofs.close();
+    }
 }
 
-// Display file
-void File::display() const
-{
-    cout << "File: " << name << endl;
-}
-void File::open()
-{
-    cout << "Opening File: " << name << endl;
-}
+File::~File() {}
 
-
-// Type check
-bool File::isFolder() const
-{
+bool File::isFolder() const {
     return false;
+}
+
+void File::display() const {
+    cout << "[FILE] " << name;
+}
+
+void File::open() {
+    cout << "Opening " << name << endl;
+}
+
+string File::getDiskPath() const {
+    return VFS_ROOT + getPath();
 }
