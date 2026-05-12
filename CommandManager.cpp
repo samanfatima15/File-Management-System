@@ -18,12 +18,14 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
-static void setColor(int color) {
+static void setColor(int color) 
+{
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
 
-CommandManager::CommandManager() {
+CommandManager::CommandManager() 
+{
     fs::create_directories(VFS_ROOT);
     root = new Folder("root", nullptr);
     current = root;
@@ -56,8 +58,10 @@ void CommandManager::listContents() {
     current->list();
 }
 
-void CommandManager::makeFolder(const string& name) {
-    if (name.empty()) {
+void CommandManager::makeFolder(const string& name) 
+{
+    if (name.empty()) 
+    {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
         cout << "Usage: mkdir <folder_name>" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -102,7 +106,7 @@ void CommandManager::changeFolder(const string& name) {
     }
     else if (!found->isFolder()) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Error: '" << name << "' is a file, not a folder. Use 'open' to view files." << endl;
+        cout << "there is a error because  '" << name << "' is a file, not a folder. hey user pls use 'open' to view files" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
     else {
@@ -177,11 +181,11 @@ void CommandManager::renameNode(const string& oldName, const string& newName) {
 void CommandManager::searchNode(const string& name) {
     if (name.empty()) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-        cout << "Usage: search <name>" << endl;
+        cout << "use== search <name>" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         return;
     }
-    cout << "Searching for '" << name << "'..." << endl;
+    cout << "we are seachering " << name << "" << endl;
     if (!root->searchNode(name, "")) {
         setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
         cout << "Not found." << endl;
@@ -202,14 +206,14 @@ void CommandManager::makeFile(const string& type, const string& name) {
         string fullName = name + ".txt";
         if (current->find(fullName)) {
             setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Error: '" << fullName << "' already exists" << endl;
+            cout << "there is an error '" << fullName << "beacuse it already exists" << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             return;
         }
         current->addNode(new TxtFile(name, current));
         setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
         cout << "Text file '" << fullName << "' created" << endl;
-        cout << "To edit: open " << fullName << endl;
+        cout << "to edit the file==open  " << fullName << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
     else if (type == "private") {
@@ -221,48 +225,48 @@ void CommandManager::makeFile(const string& type, const string& name) {
             return;
         }
         string pass;
-        cout << "Enter passkey: ";
+        cout << "enter the pasword for the private file: ";
         cin >> pass;
         cin.ignore();
         current->addNode(new PrivateFile(name, current, pass));
         setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
         cout << "Private file '" << fullName << "' created" << endl;
-        cout << "To edit: open " << fullName << endl;
+        cout << "for editing= open " << fullName << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
     else if (type == "audio") {
         string fullName = name + ".mpg";
         if (current->find(fullName)) {
             setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Error: '" << fullName << "' already exists" << endl;
+            cout << "there is an error'" << fullName << "as it already exists" << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             return;
         }
         current->addNode(new AudioFile(name, current));
         setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-        cout << "Audio file '" << fullName << "' created" << endl;
-        cout << "To play: open " << fullName << endl;
+        cout << "the audio file   '" << fullName << "is  created now " << endl;
+        cout << "for the oplay of the audio file :open " << fullName << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
     else if (type == "zip") {
         Node* toZip = current->find(name);
         if (!toZip) {
             setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Error: '" << name << "' not found. Can only zip existing files/folders." << endl;
+            cout << "there is an error '" << name << "is not found can only zip the file and the folders" << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             return;
         }
         string zipName = name + "-zip.zip";
         if (current->find(zipName)) {
             setColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Error: '" << zipName << "' already exists" << endl;
+            cout << "there is an error'" << zipName << "as this exxists" << endl;
             setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             return;
         }
         string origType = toZip->isFolder() ? "folder" : "file";
         current->addNode(new ZipFile(name, current, name, origType));
         setColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-        cout << "Zip file '" << zipName << "' created" << endl;
+        cout << "the zip file '" << zipName << "is created now" << endl;
         setColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
     else {
