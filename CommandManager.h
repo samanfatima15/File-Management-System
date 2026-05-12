@@ -10,7 +10,8 @@
 #include <string>
 using namespace std;
 
-class CommandManager {
+class CommandManager 
+{
 private:
     Folder* root;
     Folder* current;
