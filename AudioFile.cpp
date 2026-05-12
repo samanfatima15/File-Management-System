@@ -4,7 +4,8 @@
 using namespace std;
 
 AudioFile::AudioFile(const string& name, Node* parent)
-    : File(name + ".mpg", parent) {
+    : File(name + ".mpg", parent) 
+{
     
     cout << "audio is recortding" << endl;
     
